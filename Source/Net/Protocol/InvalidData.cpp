@@ -12,5 +12,5 @@ namespace Net::Protocol
         return {};
     }
 
-    void InvalidData::process(std::unique_ptr<Transport::Connection> connection) {}
+    void InvalidData::process(std::shared_ptr<Transport::Connection> connection) {}
 }

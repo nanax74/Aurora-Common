@@ -9,6 +9,6 @@ namespace Net::Protocol
     public:
         ID getId() override;
         std::vector<std::byte> serialize() override;
-        void process(std::unique_ptr<Transport::Connection> connection) override;
+        void process(std::shared_ptr<Transport::Connection> connection) override;
     };
 }

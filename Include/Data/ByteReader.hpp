@@ -57,6 +57,12 @@ namespace Data
             pos += count;
         }
 
+        std::size_t remain() const
+        {
+            if (pos > data.size()) return 0;
+            return data.size() - pos;
+        }
+
         std::size_t position() const { return pos; }
         bool eof() const { return pos >= data.size(); }
     };

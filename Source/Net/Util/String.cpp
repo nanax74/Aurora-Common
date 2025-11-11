@@ -1,6 +1,6 @@
 #include <sstream>
 #include <iomanip>
-#include "Net/Util/String.hpp"
+#include "Util/String.hpp"
 
 namespace Net::Util
 {
