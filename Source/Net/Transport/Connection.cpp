@@ -10,7 +10,8 @@ namespace Net::Transport
     {
         Data::ByteWriter writer;
         writer.write<int>(static_cast<int>(data->getId()));
-        writer.writeVector(data->serialize());
+        auto payload = data->serialize();
+        writer.writeBytes(payload.data(), payload.size());
         socket->send(writer.data());
     }
 
