@@ -6,6 +6,7 @@ namespace Net::Protocol
     {
         Ping = 0,
         Pong = 1,
+        Notification = 2,
     
         Invalid = -1
     };

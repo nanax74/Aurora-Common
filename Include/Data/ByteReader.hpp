@@ -45,7 +45,7 @@ namespace Data
 
         std::string readString()
         {
-            int length = read<int>();
+            int length = read<uint32_t>();
             if(length > 1024 * 1024) throw std::runtime_error("ByteReader: too long string");
             auto bytes = readBytes(length);
             return std::string(reinterpret_cast<const char*>(bytes.data()), bytes.size());

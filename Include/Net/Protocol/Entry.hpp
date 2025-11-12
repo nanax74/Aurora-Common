@@ -2,6 +2,7 @@
 
 #include "Net/Protocol/IData.hpp"
 #include <memory>
+#include <string>
 
 namespace Net::Protocol::Entry
 {
@@ -27,6 +28,18 @@ namespace Net::Protocol::Entry
         ID getId() override;
         std::vector<std::byte> serialize() override;
         static std::unique_ptr<Pong> deserialize(const std::vector<std::byte>& data);
+        void process(std::shared_ptr<Transport::Connection> connection) override;
+    };
+
+    class Notification : public IData
+    {
+    private:
+        std::string msg;
+    public:
+        Notification(std::string msg);
+        ID getId() override;
+        std::vector<std::byte> serialize() override;
+        static std::unique_ptr<Notification> deserialize(const std::vector<std::byte>& data);
         void process(std::shared_ptr<Transport::Connection> connection) override;
     };
 }
