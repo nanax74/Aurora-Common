@@ -15,5 +15,9 @@ namespace Net::Protocol
         registry->registerFactory(ID::WriteMemorySuper, &Entry::WriteMemorySuper::deserialize);
         registry->registerFactory(ID::ByteArray, &Entry::ByteArray::deserialize);
         registry->registerFactory(ID::Bool, &Entry::Bool::deserialize);
+        registry->registerFactory(ID::InputButton, &Entry::InputButton::deserialize);
+        registry->registerFactory(ID::InputLeftStick, &Entry::InputLeftStick::deserialize);
+        registry->registerFactory(ID::InputRightStick, &Entry::InputRightStick::deserialize);
+        registry->registerFactory(ID::InputClear, &Entry::InputClear::deserialize);
     }
 }

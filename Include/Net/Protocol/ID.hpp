@@ -9,6 +9,10 @@ namespace Net::Protocol
         ReadMemory = 2,
         WriteMemory = 3,
         WriteMemorySuper = 4,
+        InputButton = 5,
+        InputLeftStick = 6,
+        InputRightStick = 7,
+        InputClear = 8,
 
         Pong = 10,
         ByteArray = 11,

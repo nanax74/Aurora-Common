@@ -108,4 +108,55 @@ namespace Net::Protocol::Entry
         static std::unique_ptr<WriteMemorySuper> deserialize(const std::vector<std::byte>& data);
         void process(std::shared_ptr<Transport::Connection> connection) override;
     };
+
+    class InputButton : public IData
+    {
+    private:
+        uint32_t button;
+        uint32_t timeMs;
+    public:
+        InputButton(uint32_t button, uint32_t timeMs);
+        ID getId() override;
+        std::vector<std::byte> serialize() override;
+        static std::unique_ptr<InputButton> deserialize(const std::vector<std::byte>& data);
+        void process(std::shared_ptr<Transport::Connection> connection) override;
+    };
+
+    class InputLeftStick : public IData
+    {
+    private:
+        float x;
+        float y;
+        uint32_t timeMs;
+    public:
+        InputLeftStick(float x, float y, uint32_t timeMs);
+        ID getId() override;
+        std::vector<std::byte> serialize() override;
+        static std::unique_ptr<InputLeftStick> deserialize(const std::vector<std::byte>& data);
+        void process(std::shared_ptr<Transport::Connection> connection) override;
+    };
+
+    class InputRightStick : public IData
+    {
+    private:
+        float x;
+        float y;
+        uint32_t timeMs;
+    public:
+        InputRightStick(float x, float y, uint32_t timeMs);
+        ID getId() override;
+        std::vector<std::byte> serialize() override;
+        static std::unique_ptr<InputRightStick> deserialize(const std::vector<std::byte>& data);
+        void process(std::shared_ptr<Transport::Connection> connection) override;
+    };
+
+    class InputClear : public IData
+    {
+    public:
+        InputClear();
+        ID getId() override;
+        std::vector<std::byte> serialize() override;
+        static std::unique_ptr<InputClear> deserialize(const std::vector<std::byte>& data);
+        void process(std::shared_ptr<Transport::Connection> connection) override;
+    };
 }
