@@ -4,6 +4,8 @@
 #include <cstddef>
 #include <cstring>
 #include <stdexcept>
+#include <string>
+#include <cstdint>
 #include "Data/Endian.hpp"
 
 namespace Data
@@ -11,22 +13,35 @@ namespace Data
     class ByteReader
     {
     private:
-        const std::vector<std::byte>& data;
+        const std::vector<std::byte>& buffer;
         std::size_t pos;
 
         Endian systemEndian;
         Endian targetEndian;
 
     public:
-        ByteReader(const std::vector<std::byte>& data) : data(data), pos(0), systemEndian(getSystemEndian()), targetEndian(Endian::Big) {}
+        ByteReader(const std::vector<std::byte>& data) 
+            : buffer(data), pos(0), systemEndian(getSystemEndian()), targetEndian(Endian::Big) {}
+
+        const std::vector<std::byte>& data() const { return buffer; }
+        std::size_t position() const { return pos; }
+        std::size_t remain() const { return buffer.size() - pos; }
+        bool eof() const { return pos >= buffer.size(); }
+
+        void skip(std::size_t count)
+        {
+            if (pos + count > buffer.size()) throw std::out_of_range("ByteReader: out of range");
+            pos += count;
+        }
 
         template<typename T>
         T read()
         {
-            if (pos + sizeof(T) > data.size()) throw std::out_of_range("ByteReader: out of range");
+            static_assert(std::is_trivially_copyable_v<T>, "T must be trivially copyable");
+            if (pos + sizeof(T) > buffer.size()) throw std::out_of_range("ByteReader: out of range");
 
             T value;
-            std::memcpy(&value, data.data() + pos, sizeof(T));
+            std::memcpy(&value, buffer.data() + pos, sizeof(T));
             pos += sizeof(T);
 
             if (systemEndian != targetEndian) value = swapEndian(value);
@@ -36,34 +51,59 @@ namespace Data
 
         std::vector<std::byte> readBytes(std::size_t count)
         {
-            if (pos + count > data.size()) throw std::out_of_range("ByteReader: out of range");
-
-            std::vector<std::byte> out(data.begin() + pos, data.begin() + pos + count);
+            if (pos + count > buffer.size()) throw std::out_of_range("ByteReader: out of range");
+            std::vector<std::byte> out(buffer.begin() + pos, buffer.begin() + pos + count);
             pos += count;
             return out;
         }
+ 
+        // Length + Data
+        std::vector<std::byte> readVector()
+        {
+            uint32_t len = read<uint32_t>();
+            if (pos + len > buffer.size()) throw std::out_of_range("ByteReader: readVector out of range");
+            std::vector<std::byte> out(buffer.begin() + pos, buffer.begin() + pos + len);
+            pos += len;
+            return out;
+        }
 
+        // Length + Data
         std::string readString()
         {
-            int length = read<uint32_t>();
-            if(length > 1024 * 1024) throw std::runtime_error("ByteReader: too long string");
-            auto bytes = readBytes(length);
-            return std::string(reinterpret_cast<const char*>(bytes.data()), bytes.size());
+            uint32_t len = read<uint32_t>();
+            if (pos + len > buffer.size()) throw std::out_of_range("ByteReader: readString out of range");
+            std::string out(reinterpret_cast<const char*>(buffer.data() + pos), len);
+            pos += len;
+            return out;
         }
 
-        void skip(std::size_t count)
+        // 16進文字列からT型を読み取る
+        template<typename T>
+        T readFromString()
         {
-            if (pos + count > data.size()) throw std::out_of_range("ByteReader: out of range");
-            pos += count;
-        }
+            static_assert(std::is_trivially_copyable_v<T>, "T must be trivially copyable");
 
-        std::size_t remain() const
-        {
-            if (pos > data.size()) return 0;
-            return data.size() - pos;
-        }
+            std::size_t neededChars = sizeof(T) * 2;
+            if (pos + neededChars > buffer.size()) 
+                throw std::out_of_range("readFromString: out of buffer range");
 
-        std::size_t position() const { return pos; }
-        bool eof() const { return pos >= data.size(); }
+            T value{};
+            unsigned char* ptr = reinterpret_cast<unsigned char*>(&value);
+
+            for (std::size_t i = 0; i < sizeof(T); ++i)
+            {
+                char high = reinterpret_cast<const char*>(buffer.data() + pos)[i * 2];
+                char low  = reinterpret_cast<const char*>(buffer.data() + pos)[i * 2 + 1];
+                std::string byteStr{high, low};
+                ptr[i] = static_cast<unsigned char>(std::stoul(byteStr, nullptr, 16));
+            }
+
+            pos += neededChars;
+
+            if (systemEndian != targetEndian)
+                value = swapEndian(value);
+
+            return value;
+        }
     };
 }

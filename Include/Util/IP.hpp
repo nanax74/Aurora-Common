@@ -3,7 +3,7 @@
 #include <string>
 #include <cstdint>
 
-namespace Net::Util
+namespace Util
 {
     class IP
     {

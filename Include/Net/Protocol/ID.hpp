@@ -5,8 +5,13 @@ namespace Net::Protocol
     enum class ID
     {
         Ping = 0,
-        Pong = 1,
-        Notification = 2,
+        Notification = 1,
+        ReadMemory = 2,
+        WriteMemory = 3,
+
+        Pong = 10,
+        ByteArray = 11,
+        Bool = 12,
     
         Invalid = -1
     };

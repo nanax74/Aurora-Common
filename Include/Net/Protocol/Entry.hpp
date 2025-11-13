@@ -1,8 +1,11 @@
 #pragma once
 
 #include "Net/Protocol/IData.hpp"
+#include <cstdint>
 #include <memory>
 #include <string>
+#include <optional>
+#include <vector>
 
 namespace Net::Protocol::Entry
 {
@@ -40,6 +43,56 @@ namespace Net::Protocol::Entry
         ID getId() override;
         std::vector<std::byte> serialize() override;
         static std::unique_ptr<Notification> deserialize(const std::vector<std::byte>& data);
+        void process(std::shared_ptr<Transport::Connection> connection) override;
+    };
+
+    class ByteArray : public IData
+    {
+    private:
+        std::optional<std::vector<std::byte>> data;
+    public:
+        ByteArray(std::optional<std::vector<std::byte>> data);
+        ID getId() override;
+        std::vector<std::byte> serialize() override;
+        static std::unique_ptr<ByteArray> deserialize(const std::vector<std::byte>& data);
+        void process(std::shared_ptr<Transport::Connection> connection) override;
+    };
+
+    class ReadMemory : public IData
+    {
+    private:
+        uint32_t address;
+        uint32_t size;
+    public:
+        ReadMemory(uint32_t address, uint32_t size);
+        ID getId() override;
+        std::vector<std::byte> serialize() override;
+        static std::unique_ptr<ReadMemory> deserialize(const std::vector<std::byte>& data);
+        void process(std::shared_ptr<Transport::Connection> connection) override;
+    };
+
+    class WriteMemory : public IData
+    {
+    private:
+        uint32_t address;
+        std::vector<std::byte> data;
+    public:
+        WriteMemory(uint32_t address, std::vector<std::byte> data);
+        ID getId() override;
+        std::vector<std::byte> serialize() override;
+        static std::unique_ptr<WriteMemory> deserialize(const std::vector<std::byte>& data);
+        void process(std::shared_ptr<Transport::Connection> connection) override;
+    };
+
+    class Bool : public IData
+    {
+    private:
+        bool flag;
+    public:
+        Bool(bool flag);
+        ID getId() override;
+        std::vector<std::byte> serialize() override;
+        static std::unique_ptr<Bool> deserialize(const std::vector<std::byte>& data);
         void process(std::shared_ptr<Transport::Connection> connection) override;
     };
 }

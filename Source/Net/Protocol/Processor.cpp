@@ -10,5 +10,9 @@ namespace Net::Protocol
         registry->registerFactory(ID::Ping, &Entry::Ping::deserialize);
         registry->registerFactory(ID::Pong, &Entry::Pong::deserialize);
         registry->registerFactory(ID::Notification, &Entry::Notification::deserialize);
+        registry->registerFactory(ID::ReadMemory, &Entry::ReadMemory::deserialize);
+        registry->registerFactory(ID::WriteMemory, &Entry::WriteMemory::deserialize);
+        registry->registerFactory(ID::ByteArray, &Entry::ByteArray::deserialize);
+        registry->registerFactory(ID::Bool, &Entry::Bool::deserialize);
     }
 }

@@ -2,7 +2,7 @@
 
 #include <chrono>
 
-namespace Net::Util
+namespace Util
 {
     class Time
     {
