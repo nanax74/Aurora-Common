@@ -95,4 +95,17 @@ namespace Net::Protocol::Entry
         static std::unique_ptr<Bool> deserialize(const std::vector<std::byte>& data);
         void process(std::shared_ptr<Transport::Connection> connection) override;
     };
+    
+    class WriteMemorySuper : public IData
+    {
+    private:
+        uint32_t address;
+        std::vector<std::byte> data;
+    public:
+        WriteMemorySuper(uint32_t address, std::vector<std::byte> data);
+        ID getId() override;
+        std::vector<std::byte> serialize() override;
+        static std::unique_ptr<WriteMemorySuper> deserialize(const std::vector<std::byte>& data);
+        void process(std::shared_ptr<Transport::Connection> connection) override;
+    };
 }
