@@ -2,7 +2,7 @@
 
 namespace Net::Protocol
 {
-    enum class ID
+    enum class ID : int
     {
         Ping = 0,
         Notification = 1,
